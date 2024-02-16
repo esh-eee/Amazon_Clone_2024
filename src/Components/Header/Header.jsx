@@ -6,9 +6,10 @@ import { CiShoppingCart } from "react-icons/ci";
 import LowerHeader from "./LowerHeader";
 import { Link } from "react-router-dom";
 import { DataContext } from "../DataProvider/DataProvider";
+import {auth} from "../../Utility/firebase"
 
 const Header = () => {
-  const[{basket}, dispatch]=useContext(DataContext)
+  const[{user, basket}, dispatch]=useContext(DataContext)
 const totalItem=basket?.reduce((amount,item)=>{
   return item.amount + amount
 },0)
@@ -41,7 +42,7 @@ const totalItem=basket?.reduce((amount,item)=>{
               <option value="">All</option>
             </select>
             <input type="text" placeholder="search products" />
-            <FaSearch size={26} />
+            <FaSearch size={40} />
           </div>
           {/*right side link  */}
           <div className={classes.order__container}>
@@ -65,15 +66,26 @@ const totalItem=basket?.reduce((amount,item)=>{
             </Link>
             {/* three components */}
 
-            <Link to="">
-              <p>Sign In</p>
-              <span>Account & Lists</span>
-            </Link>
+            <Link to={!user && "/auth"}>
+            <div>
+                {user ? (
+                  <>
+                    <p>Hello {user?.email?.split("@")[0]}</p>
+                
+                    <span onClick={() => (user ? auth.signOut() : null)}>
+                      Sign Out
+                    </span>  
+                   
+                  </>
+                ) : (
+                  <>
+                    <p>Hello, Sign In</p>
+                    <span>Account & Lists</span>
+                  </>
+                )}
 
-            {/* orders */}
-            <Link to="/orders">
-              <p>returns</p>
-              <span>& orders</span>
+              </div>
+            
             </Link>
             {/* cart */}
             <Link to="/cart" className={classes.cart}>
